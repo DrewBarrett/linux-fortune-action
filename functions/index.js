@@ -4,8 +4,22 @@ const fortune = require('fortune-teller');
 exports.fortune = functions.https.onRequest((req, res) => {
   const app = new DialogflowApp({request: req, response: res});
   function welcomeIntent (app) {
+    if (!app.getLastSeen()) {
+      app.askForConfirmation('This app contains mature content. Continue?');
+    }
     app.tell(fortune.fortune());
+    app.askForConfirmation('Would you like to hear another?');
   }
-  app.handleRequest(welcomeIntent)
+  function confirmationHandler(app) {
+    if (!app.getUserConfirmation()) {
+      app.tell('cowsay Goodbye');
+    }
+    app.tell(fortune.fortune());
+    app.askForConfirmation('Would you like to hear another?');
+  }
+  let actionMap = new Map()
+  actionMap.set('input.welcome', welcomeIntent)
+  actionMap.set('actions.intent.CONFIRMATION', confirmationHandler)
+  app.handleRequest(actionMap)
 
 });
