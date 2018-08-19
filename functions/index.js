@@ -7,14 +7,14 @@ exports.fortune = functions.https.onRequest((req, res) => {
     if (!app.getLastSeen()) {
       app.askForConfirmation('This app contains mature content. Continue?');
     }
-    app.tell(fortune.fortune());
+    app.ask(fortune.fortune());
     app.askForConfirmation('Would you like to hear another?');
   }
   function confirmationHandler(app) {
     if (!app.getUserConfirmation()) {
       app.tell('cowsay Goodbye');
     }
-    app.tell(fortune.fortune());
+    app.ask(fortune.fortune());
     app.askForConfirmation('Would you like to hear another?');
   }
   let actionMap = new Map()
